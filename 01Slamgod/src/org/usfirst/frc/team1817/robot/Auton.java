@@ -7,10 +7,16 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+/*
+ * Left and right auto modes should be set up with the far corner slightly 
+ * farther than the edge of the switch
+ * Middle should be about centered on the middle driver station
+ */
 public class Auton {
 
 	private final int ROBOT_LENGTH = 38;
 	private final int DISTANCE_TO_SWITCH_FRONT = 144 - ROBOT_LENGTH;
+	private final int DISTANCE_TO_SWITCH_MID = 170 - ROBOT_LENGTH;
 	private final int DISTANCE_TO_SWITCH_END = 196 - ROBOT_LENGTH;
 	private final int SWITCH_LENGTH = 154;
 	private final int LEFT_TURN = -90;
@@ -21,8 +27,8 @@ public class Auton {
 
 	private DifferentialDrive chassis;
 	@SuppressWarnings("unused")
-	private Lift lift;
-	private Intake intake;
+	private Arm lift;
+	private Hand intake;
 
 	private PIDController withGyro;
 	private PIDController withEncoder;
@@ -36,8 +42,8 @@ public class Auton {
 
 	private boolean killswitch = false;
 
-	public Auton(ADXRS450_Gyro gyro, Encoder encoderL, Encoder encoderR, DifferentialDrive chassis, Lift lift,
-			Intake intake) {
+	public Auton(ADXRS450_Gyro gyro, Encoder encoderL, Encoder encoderR, DifferentialDrive chassis, Arm lift,
+			Hand intake) {
 		withGyro = new PIDController(0.08, 0.0165, 0.0845, gyro, dummyMotor);
 		withEncoder = new PIDController(0.08, 0.0185, 0.3, encoderL, dummyMotor);
 		this.encoderL = encoderL;
@@ -84,10 +90,14 @@ public class Auton {
 	 */
 	private void placeLeftFromLeft() {
 		killswitch = false;
-		driveTo(DISTANCE_TO_SWITCH_FRONT);
-		/*
-		 * Shoot box out face opposing wall again
-		 */
+		driveTo(DISTANCE_TO_SWITCH_MID);
+		turnTo(RIGHT_TURN);
+		chassis.arcadeDrive(0.5, 0);
+		Timer.delay(0.5);
+		//Shoot box out face opposing wall again
+		intake.expel(1);
+		Timer.delay(1);
+		intake.expel(0);
 
 	}
 
@@ -100,9 +110,10 @@ public class Auton {
 		turnTo(LEFT_TURN + 45);
 		driveTo(HYPOTONUSE);
 		turnTo(45);
-		/*
-		 * shoot cube
-		 */
+		//shoot cube
+		intake.expel(1);
+		Timer.delay(1);
+		intake.expel(0);
 
 	}
 
@@ -114,11 +125,14 @@ public class Auton {
 		killswitch = false;
 		driveTo(DISTANCE_TO_SWITCH_END + 12);
 		turnTo(LEFT_TURN);
-		driveTo(SWITCH_LENGTH);
+		driveTo(SWITCH_LENGTH - 14);
 		turnTo(LEFT_TURN);
-		/*
-		 * shoot cube
-		 */
+		chassis.arcadeDrive(0.5, 0);
+		Timer.delay(0.5);
+		//shoot cube
+		intake.expel(1);
+		Timer.delay(1);
+		intake.expel(0);
 	}
 
 	/**
@@ -129,11 +143,14 @@ public class Auton {
 		killswitch = false;
 		driveTo(DISTANCE_TO_SWITCH_END + 12);
 		turnTo(RIGHT_TURN);
-		driveTo(SWITCH_LENGTH);
+		driveTo(SWITCH_LENGTH - 14);
 		turnTo(RIGHT_TURN);
-		/*
-		 * shoot cube
-		 */
+		chassis.arcadeDrive(0.5, 0);
+		Timer.delay(0.5);
+		// shoot cube
+		intake.expel(1);
+		Timer.delay(1);
+		intake.expel(0);
 	}
 
 	/**
@@ -145,6 +162,8 @@ public class Auton {
 		turnTo(45);
 		driveTo(HYPOTONUSE);
 		turnTo(-45);
+		chassis.arcadeDrive(0.5, 0);
+		Timer.delay(0.5);
 		//Shoot cube
 		intake.expel(1);
 		Timer.delay(1);
@@ -157,7 +176,10 @@ public class Auton {
 	 */
 	private void placeRightFromRight() {
 		killswitch = false;
-		driveTo(DISTANCE_TO_SWITCH_FRONT);
+		driveTo(DISTANCE_TO_SWITCH_MID);
+		turnTo(LEFT_TURN);
+		chassis.arcadeDrive(0.5, 0);
+		Timer.delay(0.5);
 		// Shoot box out 
 		intake.expel(1);
 		Timer.delay(1);
