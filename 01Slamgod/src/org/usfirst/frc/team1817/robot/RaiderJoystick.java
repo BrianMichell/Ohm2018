@@ -43,19 +43,19 @@ public class RaiderJoystick extends XboxController {
 	}
 
 	public boolean getLeftXMoved() {
-		return getLeftXAbs() > 0.0;
+		return getLeftXAbs()-DEADZONE > 0.0;
 	}
 
 	public boolean getLeftYMoved() {
-		return getLeftYAbs() > 0.0;
+		return getLeftYAbs()-DEADZONE > 0.0;
 	}
 
 	public boolean getRightXMoved() {
-		return getRightXAbs() > 0.0;
+		return getRightXAbs()-DEADZONE > 0.0;
 	}
 
 	public boolean getRightYMoved() {
-		return getRightYAbs() > 0.0;
+		return getRightYAbs()-DEADZONE > 0.0;
 	}
 
 	public double getLeftTrigger() {

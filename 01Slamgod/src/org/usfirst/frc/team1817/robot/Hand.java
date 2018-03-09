@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-public class Intake {
+public class Hand {
 
 	private final int STOWED_THRESH = 20;
 	private final int EXTENDED_THRESH = 100;
@@ -15,8 +15,8 @@ public class Intake {
 	private SpeedControllerGroup intake, wrist;
 	private Encoder wristEncoder;
 
-	public Intake(PWMSpeedController intake, PWMSpeedController wrist, Encoder wristEncoder) {
-		this.intake = new SpeedControllerGroup(intake);
+	public Hand(SpeedControllerGroup intake, PWMSpeedController wrist, Encoder wristEncoder) {
+		this.intake = intake;
 		this.wrist = new SpeedControllerGroup(wrist);
 		this.wristEncoder = wristEncoder;
 	}
@@ -45,7 +45,7 @@ public class Intake {
 	 * @param speed
 	 *            Speed at which the motor spins
 	 */
-	public void injest(double speed) {
+	public void ingest(double speed) {
 		if (stowed())
 			speed *= -1;
 		intake.set(speed);
@@ -69,6 +69,7 @@ public class Intake {
 	public void stow() {
 		if (inThread)
 			return;
+		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, wristEncoder, wrist);
 		pid.setAbsoluteTolerance(15.0);
 		pid.setOutputRange(-0.5, 0.5);
@@ -76,7 +77,7 @@ public class Intake {
 		pid.enable();
 		new Thread(() -> {
 			inThread = true;
-			while (!pid.onTarget() && Math.abs(wristEncoder.getRate()) > 1) {
+			while (!pid.onTarget() && Math.abs(wristEncoder.getRate()) > 1 && inThread) {
 				// do nothing
 			}
 			pid.free();
@@ -90,6 +91,7 @@ public class Intake {
 	public void extend() {
 		if (inThread)
 			return;
+		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, wristEncoder, wrist);
 		pid.setAbsoluteTolerance(15.0);
 		pid.setOutputRange(-0.5, 0.5);
@@ -97,7 +99,7 @@ public class Intake {
 		pid.enable();
 		new Thread(() -> {
 			inThread = true;
-			while (!pid.onTarget() && Math.abs(wristEncoder.getRate()) > 1) {
+			while (!pid.onTarget() && Math.abs(wristEncoder.getRate()) > 1 && inThread) {
 				// do nothing
 			}
 			pid.free();
@@ -106,8 +108,10 @@ public class Intake {
 	}
 
 	/**
-	 * Moves the intake into travel position 
-	 * @param speed Speed at which the motor spins
+	 * Moves the intake into travel position
+	 * 
+	 * @param speed
+	 *            Speed at which the motor spins
 	 */
 	public void manualStow(double speed) {
 		killAutoMovement();
@@ -116,7 +120,9 @@ public class Intake {
 
 	/**
 	 * Moves the intake to prepare to injest a cube
-	 * @param speed Speed at which the motor spins
+	 * 
+	 * @param speed
+	 *            Speed at which the motor spins
 	 */
 	public void manualExtend(double speed) {
 		killAutoMovement();
@@ -129,6 +135,7 @@ public class Intake {
 
 	/**
 	 * Is the intake subsystem automatically doing something
+	 * 
 	 * @return True if it is, False otherwise
 	 */
 	public boolean inAction() {

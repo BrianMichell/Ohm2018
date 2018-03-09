@@ -2,10 +2,9 @@ package org.usfirst.frc.team1817.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
-public class Lift {
+public class Arm {
 
 	private final int STOWED_THRESH = 50;
 
@@ -18,10 +17,10 @@ public class Lift {
 	private Encoder elbowEncoder;
 	private Encoder winchEncoder;
 
-	public Lift(PWMSpeedController elbow, PWMSpeedController winch, Encoder elbowEncoder, Encoder winchEncoder) {
-		elbowMotors = new SpeedControllerGroup(elbow);
+	public Arm(SpeedControllerGroup elbow, SpeedControllerGroup winch, Encoder elbowEncoder, Encoder winchEncoder) {
+		elbowMotors = elbow;
 		this.elbowEncoder = elbowEncoder;
-		this.winchMotors = new SpeedControllerGroup(winch);
+		this.winchMotors = winch;
 		this.winchEncoder = winchEncoder;
 	}
 
@@ -38,6 +37,7 @@ public class Lift {
 	public void retract() {
 		if (inThread)
 			return;
+		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, winchEncoder, winchMotors);
 		pid.setAbsoluteTolerance(15);
 		pid.setOutputRange(-0.5, 0.5);
@@ -45,7 +45,7 @@ public class Lift {
 		pid.enable();
 		new Thread(() -> {
 			inThread = true;
-			while (!pid.onTarget() && Math.abs(winchEncoder.getRate()) > 1) {
+			while (!pid.onTarget() && Math.abs(winchEncoder.getRate()) > 1 && inThread) {
 				// do nothing
 			}
 			pid.free();
@@ -59,6 +59,7 @@ public class Lift {
 	public void extend() {
 		if (inThread)
 			return;
+		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, winchEncoder, winchMotors);
 		pid.setAbsoluteTolerance(15.0);
 		pid.setOutputRange(-0.5, 0.5);
@@ -66,7 +67,7 @@ public class Lift {
 		pid.enable();
 		new Thread(() -> {
 			inThread = true;
-			while (!pid.onTarget() && Math.abs(winchEncoder.getRate()) > 1) {
+			while (!pid.onTarget() && Math.abs(winchEncoder.getRate()) > 1 && inThread) {
 				// do nothing
 			}
 			pid.free();
@@ -82,9 +83,11 @@ public class Lift {
 	 * @param angle
 	 *            The angle at which the intake should be positioned
 	 */
+	//TODO This is not going to work as is. Need to calculate the angle, not use a raw angle
 	public void setAngle(double angle) {
 		if (inThread)
 			return;
+		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, elbowEncoder, elbowMotors);
 		pid.setAbsoluteTolerance(15);
 		pid.setOutputRange(-0.5, 0.5);
@@ -92,7 +95,7 @@ public class Lift {
 		pid.enable();
 		new Thread(() -> {
 			inThread = true;
-			while (!pid.onTarget() && Math.abs(elbowEncoder.getRate()) > 1) {
+			while (!pid.onTarget() && Math.abs(elbowEncoder.getRate()) > 1 && inThread) {
 				// do nothing
 			}
 			pid.free();
@@ -135,6 +138,7 @@ public class Lift {
 		return inThread;
 	}
 
+	//TODO Set this up if used. Remove it otherwise
 	@SuppressWarnings("unused")
 	private double getAngle() {
 		return 0.6 * (elbowEncoder.get() / 5.0);

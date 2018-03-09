@@ -255,11 +255,11 @@ public class Auton {
 		driveTo(SWITCH_LENGTH / 2 - 12);
 		while (intake.inAction()) {
 			// Since it's still not "extended" spin the wheels opposite the way the code wants to
-			intake.injest(-1);
+			intake.ingest(-1);
 		}
-		intake.injest(1);
+		intake.ingest(1);
 		Timer.delay(0.5);
-		intake.injest(0);
+		intake.ingest(0);
 	}
 
 	/**
@@ -271,11 +271,11 @@ public class Auton {
 		intake.extend();
 		while (intake.inAction()) {
 			// Since it's still not "extended" spin the wheels opposite the way the code wants to
-			intake.injest(-1);
+			intake.ingest(-1);
 		}
-		intake.injest(1);
+		intake.ingest(1);
 		Timer.delay(0.5);
-		intake.injest(0);
+		intake.ingest(0);
 	}
 
 	/**

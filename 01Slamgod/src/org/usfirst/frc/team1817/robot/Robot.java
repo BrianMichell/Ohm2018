@@ -30,9 +30,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,17 +54,17 @@ public class Robot extends TimedRobot {
 	private final float BOAT = 8047; // IT'S ALWAYS A WATER GAME!!!
 
 	// ROBOT OBJECTS
-	public SpeedControllerGroup leftShark;
-	public SpeedControllerGroup right;
+	public VictorSP leftShark;
+	public VictorSP right;
 	public DifferentialDrive chassis;
 	private Servo backShifter;
 	private Servo frontShifter;
 	private RaiderJoystick driver;
 	private RaiderJoystick manipulator;
 	// ROBOT PARTS
-	private Arm arm;
+	//private Arm arm;
 	private Hand hand;
-	private Auton a;
+	//private Auton a;
 	// SENSORS
 	private PowerDistributionPanel pdp;
 	public Encoder encoderL;
@@ -92,20 +90,16 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Aliance Station", station);
 		SmartDashboard.putData("Auton", auto);
 		// Left side motor controllers
-		//TODO Update PWM values
-		leftShark = new SpeedControllerGroup(new VictorSP(1), new VictorSP(2), new VictorSP(0));
-		leftShark.setInverted(true);
+		leftShark = new VictorSP(1);
+		//		leftShark.setInverted(true);
 		// Right side motor controllers
-		//TODO Update PWM values
-		right = new SpeedControllerGroup(new VictorSP(4), new VictorSP(5), new VictorSP(3));
-		right.setInverted(true);
+		right = new VictorSP(0);
+		//		right.setInverted(true);
 		// Drive train
 		chassis = new DifferentialDrive(leftShark, right);
 		chassis.setDeadband(0.2);
 		// Shifters
-		//TODO Update PWM value
 		frontShifter = new Servo(8);
-		//TODO Update PWM value
 		backShifter = new Servo(9);
 		// Left encoder
 		//TODO Update DIO value
@@ -123,13 +117,23 @@ public class Robot extends TimedRobot {
 		pdp = new PowerDistributionPanel();
 		gyro = new ADXRS450_Gyro();
 		gyro.calibrate();
+
+		VictorSP intake = new VictorSP(2);
+		intake.setInverted(true);
+		hand = new Hand(new SpeedControllerGroup(new VictorSP(6), intake), new VictorSP(7), new Encoder(9, 10));
+
 		// Robot parts decelerations
+		/*
 		a = new Auton(gyro, encoderL, encoderR, chassis, arm, hand);
 		//TODO Update PWM and DIO values
-		arm = new Arm(new VictorSP(12), new VictorSP(13), new Encoder(5, 6), new Encoder(7, 8));
+		VictorSP shoulder=new VictorSP(4);
+		shoulder.setInverted(true);
+		arm=new Arm(new SpeedControllerGroup(shoulder,new VictorSP(5)), new SpeedControllerGroup(new VictorSP(11)), new Encoder(11,12), new Encoder(13,14));
 		//TODO Update PWM and DIO values
-		hand = new Hand(new VictorSP(14), new VictorSP(15), new Encoder(9, 10));
-
+		VictorSP intake=new VictorSP(2);
+		intake.setInverted(true);
+		hand = new Hand(new SpeedControllerGroup(new VictorSP(6), intake), new VictorSP(7), new Encoder(9, 10));
+		*/
 		//Thread to handle shifting
 		new Thread(() -> {
 			boolean pressed;
@@ -140,13 +144,14 @@ public class Robot extends TimedRobot {
 				}
 				if (pressed) {
 					updateGear();
-				} 
+				}
 			}
 		}).start();
 	}
 
 	@Override
 	public void autonomousInit() {
+		/*
 		//Set bot to low gear
 		lowGear=true;
 		shift();
@@ -164,9 +169,9 @@ public class Robot extends TimedRobot {
 			botLocation = 'r';
 			break;
 		}
-
+		
 		Thread autoExecutor;
-
+		
 		switch (auto.getSelected()) {
 		case AUTO_CUBE:
 			autoExecutor = new Thread(() -> {
@@ -184,6 +189,7 @@ public class Robot extends TimedRobot {
 			});
 		}
 		autoExecutor.start();
+		*/
 	}
 
 	@Override
@@ -192,14 +198,32 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		a.kill();
+		//a.kill();
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		// Autonomous driver functions
 		//TODO Make sure driver can use these controls
-			//TODO Simplify controls to limit button presses
+		//TODO Simplify controls to limit button presses
+
+		if (driver.getLeftTriggerPressed()) {
+			hand.ingest(driver.getLeftTrigger());
+		} else if (driver.getRightTriggerPressed()) {
+			hand.expel(-1 * driver.getRightTrigger());
+		} else {
+			hand.ingest(0);
+		}
+
+		if (manipulator.getLeftTriggerPressed())
+			hand.manualStow(manipulator.getLeftTrigger());
+		else if (manipulator.getRightTriggerPressed())
+			hand.manualExtend(manipulator.getRightTrigger());
+		else {
+			hand.manualExtend(0);
+		}
+
+		/*
 		if (driver.getDUp())
 			arm.extend();
 		if (driver.getDDown())
@@ -227,10 +251,10 @@ public class Robot extends TimedRobot {
 			hand.manualStow(manipulator.getLeftTrigger());
 		if (manipulator.getRightTriggerPressed())
 			hand.manualExtend(manipulator.getRightTrigger());
-			
+		*/
 		// Handle driving
-		double forward = driver.getLeftY();
-		double turn = driver.getRightX();
+		double forward = -1 * driver.getLeftY();
+		double turn = -1 * driver.getRightX();
 
 		// Limited forward/backward
 		double changeForward = forward - limitedForward;
@@ -272,7 +296,7 @@ public class Robot extends TimedRobot {
 	}
 
 	private void shift() {
-		if(lowGear) {
+		if (lowGear) {
 			frontShifter.setAngle(0);
 			backShifter.setAngle(100);
 		} else {
