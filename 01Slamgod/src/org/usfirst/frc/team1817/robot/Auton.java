@@ -392,11 +392,6 @@ public class Auton {
 		*/
 	}
 
-	public void printStatus() {
-		System.out.println(withGyro.isEnabled());
-		System.out.println(withEncoder.isEnabled());
-	}
-
 	public void kill() {
 		killswitch = true;
 		withGyro.disable();

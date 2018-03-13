@@ -91,7 +91,6 @@ public class Arm {
 	public void setAngle(double angle) {
 		if (inThread)
 			return;
-		//TODO Tune or remove
 		PIDController pid = new PIDController(0, 0, 0, elbowEncoder, elbowMotors);
 		pid.setAbsoluteTolerance(15);
 		pid.setOutputRange(-0.5, 0.5);

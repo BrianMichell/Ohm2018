@@ -101,4 +101,5 @@ public class RaiderJoystick extends XboxController {
 	private double deadzone(double value) {
 		return Math.abs(value) >= DEADZONE ? value : 0.0;
 	}
+	
 }

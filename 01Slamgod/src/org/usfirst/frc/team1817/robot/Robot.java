@@ -18,6 +18,7 @@ package org.usfirst.frc.team1817.robot;
 //TODO Clear faults from CAN system (LOW-MID PRIORITY)
 //TODO Implement automatic downshifting when the bot is stopped (LOW PRIORITY)
 
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;

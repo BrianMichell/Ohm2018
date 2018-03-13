@@ -173,7 +173,6 @@ public class Hand implements Runnable {
 	}
 
 	private void killAutoMovement() {
-		//		inThread = false;
 		state = 0;
 	}
 
