@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1817.robot;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 public class Arm {
@@ -15,13 +14,14 @@ public class Arm {
 	private SpeedControllerGroup elbowMotors;
 	private SpeedControllerGroup winchMotors;
 	private Encoder elbowEncoder;
-	private Encoder winchEncoder;
+	//private Encoder winchEncoder;
 
-	public Arm(SpeedControllerGroup elbow, SpeedControllerGroup winch, Encoder elbowEncoder, Encoder winchEncoder) {
-		elbowMotors = elbow;
-		this.elbowEncoder = elbowEncoder;
+	//public Arm(SpeedControllerGroup shoulder, SpeedControllerGroup winch, Encoder shoulderEncoder, Encoder winchEncoder) {
+	public Arm(SpeedControllerGroup shoulder, SpeedControllerGroup winch, Encoder shoulderEncoder) {
+		elbowMotors = shoulder;
+		this.elbowEncoder = shoulderEncoder;
 		this.winchMotors = winch;
-		this.winchEncoder = winchEncoder;
+		//this.winchEncoder = winchEncoder;
 	}
 
 	/**
@@ -34,6 +34,7 @@ public class Arm {
 	/**
 	 * Pulls the lift into its smallest configuration.
 	 */
+	/*
 	public void retract() {
 		if (inThread)
 			return;
@@ -52,10 +53,11 @@ public class Arm {
 			inThread = false;
 		}).start();
 	}
-
+	*/
 	/**
 	 * Extends the lift to its full range
 	 */
+	/*
 	public void extend() {
 		if (inThread)
 			return;
@@ -74,7 +76,7 @@ public class Arm {
 			inThread = false;
 		}).start();
 	}
-
+	*/
 	/**
 	 * Sets the lift to a desired angle. This is run on a PID loop that WILL NOT run
 	 * forever. Once it reaches a set tolerance it will terminate. Another function
@@ -83,7 +85,9 @@ public class Arm {
 	 * @param angle
 	 *            The angle at which the intake should be positioned
 	 */
+
 	//TODO This is not going to work as is. Need to calculate the angle, not use a raw angle
+	/*
 	public void setAngle(double angle) {
 		if (inThread)
 			return;
@@ -102,7 +106,7 @@ public class Arm {
 			inThread = false;
 		}).start();
 	}
-
+	*/
 	/**
 	 * Manual change of the height of the lift
 	 * 

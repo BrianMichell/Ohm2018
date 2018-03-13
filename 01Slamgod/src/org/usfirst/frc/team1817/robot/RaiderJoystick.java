@@ -43,19 +43,19 @@ public class RaiderJoystick extends XboxController {
 	}
 
 	public boolean getLeftXMoved() {
-		return getLeftXAbs()-DEADZONE > 0.0;
+		return getLeftXAbs() - DEADZONE > 0.0;
 	}
 
 	public boolean getLeftYMoved() {
-		return getLeftYAbs()-DEADZONE > 0.0;
+		return getLeftYAbs() - DEADZONE > 0.0;
 	}
 
 	public boolean getRightXMoved() {
-		return getRightXAbs()-DEADZONE > 0.0;
+		return getRightXAbs() - DEADZONE > 0.0;
 	}
 
 	public boolean getRightYMoved() {
-		return getRightYAbs()-DEADZONE > 0.0;
+		return getRightYAbs() - DEADZONE > 0.0;
 	}
 
 	public double getLeftTrigger() {
@@ -67,11 +67,11 @@ public class RaiderJoystick extends XboxController {
 	}
 
 	public boolean getLeftTriggerPressed() {
-		return getLeftTrigger() > 0;
+		return getLeftTrigger() > DEADZONE;
 	}
 
 	public boolean getRightTriggerPressed() {
-		return getRightTrigger() > 0;
+		return getRightTrigger() > DEADZONE;
 	}
 
 	public boolean getDUp() {

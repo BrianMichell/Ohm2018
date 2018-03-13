@@ -26,8 +26,6 @@ public class Auton {
 	private final double GYRO_PRECISION = 0.5;
 
 	private DifferentialDrive chassis;
-	@SuppressWarnings("unused")
-	private Arm lift;
 	private Hand intake;
 
 	private PIDController withGyro;
@@ -42,21 +40,20 @@ public class Auton {
 
 	private boolean killswitch = false;
 
-	public Auton(ADXRS450_Gyro gyro, Encoder encoderL, Encoder encoderR, DifferentialDrive chassis, Arm lift,
-			Hand intake) {
+	public Auton(ADXRS450_Gyro gyro, Encoder encoderL, Encoder encoderR, DifferentialDrive chassis, Hand intake) {
+		dummyMotor.setInverted(true);
 		withGyro = new PIDController(0.08, 0.0165, 0.0845, gyro, dummyMotor);
 		withEncoder = new PIDController(0.08, 0.0185, 0.3, encoderL, dummyMotor);
 		this.encoderL = encoderL;
 		this.encoderR = encoderR;
 		this.gyro = gyro;
 		this.chassis = chassis;
-		this.lift = lift;
 		this.intake = intake;
 	}
 
 	public void lineCross() {
 		killswitch = false;
-		driveTo(120);
+		driveTo(140);
 
 	}
 
@@ -253,7 +250,7 @@ public class Auton {
 	private void getCubeFromLeft() {
 		turnTo(RIGHT_TURN);
 		driveTo(SWITCH_LENGTH / 2 - 12);
-		while (intake.inAction()) {
+		while (intake.inAction() && !killswitch) {
 			// Since it's still not "extended" spin the wheels opposite the way the code wants to
 			intake.ingest(-1);
 		}
@@ -330,9 +327,7 @@ public class Auton {
 	}
 
 	private void executeEncoderDrive() {
-		while (encoderThresh()) {
-			if (killswitch)
-				break;
+		while (encoderThresh() && !killswitch) {
 			driveStraight();
 		}
 		withEncoder.disable();
@@ -345,9 +340,7 @@ public class Auton {
 	}
 
 	private void executeGyroTurn() {
-		while (!gyroThresh()) {
-			if (killswitch)
-				break;
+		while (!gyroThresh() && !killswitch) {
 			chassis.arcadeDrive(0, withGyro.get());
 		}
 		withGyro.disable();
@@ -385,15 +378,18 @@ public class Auton {
 
 	private void driveStraight() {
 		double speed = withEncoder.get();
+		chassis.tankDrive(speed, -1*speed);
+		/*
 		double r = encoderR.getDistance() / 12.0;
 		double l = encoderL.getDistance() / 12.0;
 
 		double delta = r - l;
 		if (l < r) {
-			chassis.tankDrive(speed, speed - delta);
+			chassis.tankDrive(speed, (speed - delta)*-1);
 		} else {
-			chassis.tankDrive(speed + delta, speed);
+			chassis.tankDrive(speed + delta, -1*speed);
 		}
+		*/
 	}
 
 	public void printStatus() {
